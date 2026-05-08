@@ -19,20 +19,23 @@
             <form method="POST" action="/change-company" class="d-flex align-items-center">
                 @csrf
 
-                <select 
-                    name="company_id"
+                <select name="company_data"
                     class="form-select form-select-sm rounded-pill shadow-none"
                     onchange="this.form.submit()"
-                    style="min-width: 220px;"
-                >
+                    style="min-width: 220px;">
+
                     @foreach(auth()->user()->companies as $company)
-                        <option 
-                            value="{{ $company->id }}"
-                            {{ session('current_company_id') == $company->id ? 'selected' : '' }}
+                        <option
+                            value="{{ $company->id }}|{{ $company->pivot->role }}"
+                            @selected(
+                                session('current_company_id') == $company->id &&
+                                session('currentUserRole') == $company->pivot->role
+                            )
                         >
                             {{ $company->name }} ({{ ucfirst($company->pivot->role) }})
                         </option>
                     @endforeach
+
                 </select>
             </form>
 
@@ -45,23 +48,27 @@
         @endif
     </div>
 
-    
+   
     <div class="row g-4 mb-5">
+        @if(!currentUserRole() === 'member') 
         <div class="col-md-4">
             <div class="card border-0 shadow-sm rounded-4 p-3">
                 <div class="d-flex align-items-center">
                     <div class="bg-primary-subtle text-primary rounded-3 p-3 me-3">
                         <i class="bi bi-person-badge fs-4"></i>
                     </div>
+                    
                     <div>
                         <div class="text-muted small fw-bold text-uppercase">Total Users</div>
                             <h5 class="fw-bold mb 
                         <h5 class="fw-bold mb-0">#{{ $users }}</h5>
                        
                     </div>
+               
                 </div>
             </div>
         </div>
+             @endif
 
         <div class="col-md-4">
             <div class="card border-0 shadow-sm rounded-4 p-3">

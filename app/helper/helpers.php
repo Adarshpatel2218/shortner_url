@@ -9,9 +9,6 @@ function currentCompanyId()
 
 function currentUserRole()
 {
-    $user = auth()->user();
-
-    return CompanyUser::where('user_id', $user->id)
-        ->where('company_id', currentCompanyId())
-        ->value('role');
+    // dd(session('currentUserRole') , "from helper");
+    return session('currentUserRole');
 }

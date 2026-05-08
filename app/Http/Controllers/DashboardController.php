@@ -18,7 +18,6 @@ class DashboardController extends Controller
     {
         $user = auth()->user();
 
-        // 🔴 SuperAdmin
         if ($user->is_superadmin) {
             $urls = ShortUrl::all();
             $users = User::Count();
@@ -40,6 +39,8 @@ class DashboardController extends Controller
         if ($role === 'admin') {
             $urls = ShortUrl::where('company_id', $companyId)->get();
             $users = CompanyUser::where('company_id', $companyId)->count();
+            $companies = $user->companies()->get();
+            return view('dashboard.dashboard', compact('urls' , 'users', 'companies'));
         } else {
             $urls = ShortUrl::where('company_id', $companyId)
                 ->where('user_id', $user->id)
@@ -48,7 +49,9 @@ class DashboardController extends Controller
 
         $companies = $user->companies()->get();
 
-        return view('dashboard.dashboard', compact('urls' , 'users', 'companies'));
+        return view('dashboard.dashboard', compact('urls', 'companies'));
+
+        
     }
 
     public function usersList()
@@ -77,7 +80,6 @@ class DashboardController extends Controller
             return redirect('/select-company')->withErrors('Company not found.');
         }
 
-        // Company ke users only
         $users = CompanyUser::with(['user', 'company'])
                 ->where('company_id', $companyId)
                 ->paginate(10);

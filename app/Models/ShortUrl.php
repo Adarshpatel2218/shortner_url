@@ -17,19 +17,16 @@ class ShortUrl extends Model
         'clicks'
     ];
 
-    // 🔗 URL belongs to user
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    // 🔗 URL belongs to company
     public function company()
     {
         return $this->belongsTo(Company::class);
     }
 
-    // 🔥 Scope (VERY USEFUL)
     public function scopeForCurrentUser($query)
     {
         if (auth()->user()->is_superadmin) {

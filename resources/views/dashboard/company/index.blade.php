@@ -52,9 +52,7 @@
                                             <i class="bi bi-link-45deg"></i> New Invite
                                         </button>
 
-                                        <a href="{{ route('invites.index', $company->id) }}" class="btn btn-light btn-sm rounded-circle shadow-sm">
-                                            <i class="bi bi-eye"></i>
-                                        </a>
+                                      
                                     </div>
                                 </td>
                             </tr>
@@ -223,7 +221,6 @@
         }, 5000);
     }
 
-    // --- 1. Add Company AJAX ---
     document.getElementById('addCompanyForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         const btn = this.querySelector('button[type="submit"]');
@@ -258,7 +255,6 @@
         }
     });
 
-    // --- 2. Open Modals Functions ---
     function openInviteModal(companyId, companyName) {
         document.getElementById('modalCompanyNameOld').innerText = companyName;
         document.getElementById('old_invite_company_id').value = companyId;
@@ -283,7 +279,6 @@
         myModal.show();
     }
 
-    // --- 3. Invite Existing/Old Member AJAX ---
     document.getElementById('ajaxInviteFormOldMember').addEventListener('submit', function (e) {
         e.preventDefault();
 
@@ -318,7 +313,6 @@
         });
     });
 
-    // --- 4. Generate New Invite Link AJAX ---
     document.getElementById('ajaxInviteFormNewMember').addEventListener('submit', function(e) {
         e.preventDefault();
 
@@ -350,7 +344,6 @@
         });
     });
 
-    // --- 5. Copy New Generated Link ---
     function copyToClipboardNew() {
         const copyText = document.getElementById("new_generatedInviteLink");
         copyText.select();
@@ -369,7 +362,6 @@
         }, 2000);
     }
 
-    // --- 6. Reset New Invite Form ---
     function resetNewInviteModal() {
         document.getElementById('new_inviteFormSection').style.display = 'block';
         document.getElementById('new_inviteResultSection').style.display = 'none';

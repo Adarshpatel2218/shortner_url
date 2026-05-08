@@ -8,20 +8,16 @@ use Illuminate\Support\Str;
 
 class ShortUrlController extends Controller
 {
-    // 🔹 Page
     public function index()
     {
         $user = auth()->user();
 
-        // 🔴 SuperAdmin
         if ($user->is_superadmin) {
-
             $urls = ShortUrl::with(['user', 'company'])
                 ->latest()
                 ->get();
         }
 
-        // 🟢 Admin
         elseif (currentUserRole() === 'admin') {
 
             $urls = ShortUrl::with(['user', 'company'])
@@ -30,7 +26,6 @@ class ShortUrlController extends Controller
                 ->get();
         }
 
-        // 🔵 Member
         else {
 
             $urls = ShortUrl::with(['user', 'company'])
@@ -43,10 +38,8 @@ class ShortUrlController extends Controller
         return view('dashboard.shorturl', compact('urls'));
     }
 
-    // 🔹 AJAX Store
     public function store(Request $request)
     {
-        // ❌ SuperAdmin cannot create
         if (auth()->user()->is_superadmin) {
 
             return response()->json([
@@ -55,12 +48,10 @@ class ShortUrlController extends Controller
             ]);
         }
 
-        // ✅ validate
         $request->validate([
             'original_url' => 'required|url'
         ]);
 
-        // 🔥 unique short code
         do {
 
             $shortCode = Str::random(6);
@@ -69,7 +60,6 @@ class ShortUrlController extends Controller
             ShortUrl::where('short_code', $shortCode)->exists()
         );
 
-        // ✅ save
         $shortUrl = ShortUrl::create([
 
             'user_id' => auth()->id(),
@@ -93,7 +83,6 @@ class ShortUrlController extends Controller
         ]);
     }
 
-    // 🔹 Redirect
     public function redirect($code)
     {
         $url = ShortUrl::where('short_code', $code)->first();
@@ -102,7 +91,6 @@ class ShortUrlController extends Controller
             abort(404);
         }
 
-        // 🔥 increment click
         $url->increment('clicks');
 
         return redirect($url->original_url);
