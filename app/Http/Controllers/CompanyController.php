@@ -25,10 +25,15 @@ class CompanyController extends Controller
     public function setCompany(Request $request)
     {
         $request->validate([
-            'company_id' => 'required|exists:companies,id'
+            'company_data' => 'required'
         ]);
 
-        session(['current_company_id' => $request->company_id]);
+        [$companyId, $role] = explode('|', $request->company_data);
+
+        session([
+            'current_company_id' => $companyId,
+            'currentUserRole' => $role,
+        ]);
 
         return redirect('/dashboard');
     }
@@ -48,19 +53,16 @@ class CompanyController extends Controller
 
     public function addCompany(Request $request)
     {
-        // 1. Validation
         $request->validate([
             'name' => 'required|string|max:255|unique:companies,name',
         ]);
 
         try {
-            // 2. Create Company
             $company = Company::create([
                 'name' => $request->name,
-                'owner_id' => Auth::id(), // Ya auth()->id()
+                'owner_id' => Auth::id(), 
             ]);
 
-            // 3. Return Success Response for AJAX
             return response()->json([
                 'success' => true,
                 'message' => 'Company added successfully!',
@@ -68,7 +70,6 @@ class CompanyController extends Controller
             ], 201);
 
         } catch (\Exception $e) {
-            // 4. Return Error Response
             return response()->json([
                 'success' => false,
                 'message' => 'Something went wrong: ' . $e->getMessage()

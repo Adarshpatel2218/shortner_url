@@ -17,11 +17,19 @@ class InviteController extends Controller
         try {
 
             $user = auth()->user();
+            $role = currentUserRole();
+            $companyId = currentCompanyId();
 
-            // 🔴 Admin → session se company
-            if (currentUserRole() == 'admin') {
+            if ($user->is_superadmin) {
 
-                $companyId = session('current_company_id');
+                $invitations = Invitation::with('invitedByUser')
+                    ->latest()
+                    ->paginate(10);
+
+                return view('dashboard.invitation.index', compact('invitations'));
+            }
+
+            if ($role == 'admin') {
 
                 if (!$companyId) {
                     return redirect('/select-company');
@@ -29,7 +37,6 @@ class InviteController extends Controller
 
                 $invitations = Invitation::with('invitedByUser')
                     ->where('company_id', $companyId)
-                    ->where('invited_by', '!=', 1)
                     ->latest()
                     ->paginate(10);
 
@@ -38,12 +45,22 @@ class InviteController extends Controller
                 return view('dashboard.invitation.index', compact('invitations', 'company'));
             }
 
-            // 🔵 SuperAdmin → all data
-            $invitations = Invitation::with('invitedByUser')
-                ->latest()
-                ->paginate(10);
+            
+            if ($role == 'member') {
 
-            return view('dashboard.invitation.index', compact('invitations'));
+                $invitations = Invitation::with('invitedByUser')
+                    ->where(function ($q) use ($user) {
+
+                        $q->where('user_id', $user->id)
+                        ->orWhere('invited_by', $user->id);
+                    })
+                    ->latest()
+                    ->paginate(10);
+
+                return view('dashboard.invitation.index', compact('invitations'));
+            }
+
+            return abort(403);
 
         } catch (\Exception $e) {
 
@@ -75,7 +92,6 @@ class InviteController extends Controller
 
         $link = url('/invite/' . $token);
 
-        // Ajax ke liye JSON return karein
         return response()->json([
             'success' => true,
             'link' => $link,

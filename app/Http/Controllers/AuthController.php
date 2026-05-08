@@ -16,13 +16,11 @@ use Illuminate\Support\Facades\DB;
 
 class AuthController extends Controller
 {
-    // 🔹 Login page
     public function showLogin()
     {
         return view('auth.login');
     }
 
-    // 🔹 Login logic
     public function login(Request $request)
     {
         $credentials = $request->only('email', 'password');
@@ -33,16 +31,12 @@ class AuthController extends Controller
 
             $user = Auth::user();
 
-            // 🔴 SuperAdmin
             if ($user->is_superadmin) {
                 return redirect('/dashboard');
             }
 
             $companies = $user->companies;
 
-
-
-            // ❌ No company
             if ($companies->count() == 0) {
                 Auth::logout();
                 return back()->with('error', 'No company assigned');
@@ -50,6 +44,7 @@ class AuthController extends Controller
 
             if ($companies->count() >= 1) {
                 session(['current_company_id' => $companies[0]->id]);
+                session(['currentUserRole' => $companies[0]->pivot->role]);
                 return redirect('/dashboard');
             }
         }
@@ -57,7 +52,6 @@ class AuthController extends Controller
         return back()->with('error', 'Invalid credentials');
     }
 
-    // 🔹 Logout
     public function logout(Request $request)
     {
         Auth::logout();
@@ -68,7 +62,6 @@ class AuthController extends Controller
     }
 
 
-    // invite link se form dikhana
     // public function form($token)
     // {
     //     $invite = Invitation::where('token', $token)
@@ -106,7 +99,6 @@ class AuthController extends Controller
 
         $company = Company::find($invite->company_id);
 
-        // 🔥 check user exists
         $user = null;
 
         if (!empty($invite->user_id)) {
@@ -137,6 +129,8 @@ class AuthController extends Controller
                 'password' => 'required|min:6',
             ]);
 
+       
+
             DB::beginTransaction();
 
             $user = User::create([
@@ -155,6 +149,8 @@ class AuthController extends Controller
             $invite->save();
 
             DB::commit();
+
+            // dd("User registered and added to company successfully");
 
             return redirect('/login')
                 ->with('success', 'Account created successfully');
@@ -189,7 +185,6 @@ class AuthController extends Controller
                     ->with('error', 'User not found for this invitation.');
             }
 
-            // 🔥 Role safe check (ENUM protection)
             $role = strtolower(trim($invite->role));
 
             if (!in_array($role, ['admin', 'member'])) {
@@ -198,14 +193,12 @@ class AuthController extends Controller
                     ->with('error', 'Invalid role: ' . $invite->role);
             }
 
-            // 🔥 ALWAYS INSERT (NO CHECK)
             CompanyUser::create([
                 'user_id' => $user->id,
                 'company_id' => $invite->company_id,
                 'role' => $role,
             ]);
 
-            // 🔥 mark invite accepted
             $invite->status = 'accepted';
             $invite->save();
 
