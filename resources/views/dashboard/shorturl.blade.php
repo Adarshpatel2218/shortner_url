@@ -125,7 +125,6 @@ $("#generateBtn").click(function () {
             if (response.status) {
                 $("#original_url").val('');
                 
-                // 🔥 SweetAlert Popup with Copy Logic
                 Swal.fire({
                     title: 'Short URL Created!',
                     html: `
@@ -147,7 +146,6 @@ $("#generateBtn").click(function () {
                     allowOutsideClick: false // Taaki galti se bahar click karke reload na ho jaye
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        // 🔄 Page reload after closing
                         window.location.reload();
                     }
                 });
@@ -164,14 +162,12 @@ $("#generateBtn").click(function () {
     });
 });
 
-// Modal ke andar copy karne ka function
 function copyFromModal() {
     const copyText = document.getElementById("generated_link");
     copyText.select();
     copyText.setSelectionRange(0, 99999);
     navigator.clipboard.writeText(copyText.value);
 
-    // Visual feedback on button
     const copyBtn = event.target.closest('button');
     const originalHtml = copyBtn.innerHTML;
     copyBtn.innerHTML = '<i class="bi bi-check-lg me-1"></i> Copied!';

@@ -14,7 +14,6 @@ class Company extends Model
         'owner_id'
     ];
 
-    // 🔗 Many-to-Many with User
     public function users()
     {
         return $this->belongsToMany(User::class)
@@ -22,13 +21,11 @@ class Company extends Model
             ->withTimestamps();
     }
 
-    // 🔗 Company has many URLs
     public function shortUrls()
     {
         return $this->hasMany(ShortUrl::class);
     }
 
-    // 🔗 Owner (optional)
     public function owner()
     {
         return $this->belongsTo(User::class, 'owner_id');

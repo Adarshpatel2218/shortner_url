@@ -16,11 +16,9 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\SetCompanyContext::class,
         ]);
 
-        // Custom middleware alias
         $middleware->alias([
             'auth' => \App\Http\Middleware\AuthMiddleware::class,
-            'admin' => \App\Http\Middleware\AdminMiddleware::class,
-            'member' => \App\Http\Middleware\MemberMiddleware::class,
+            'role' => \App\Http\Middleware\RoleCheckMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

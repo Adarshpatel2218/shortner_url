@@ -23,13 +23,11 @@ class Invitation extends Model
         'expires_at' => 'datetime',
     ];
 
-    // 🔗 Company relation
     public function company()
     {
         return $this->belongsTo(Company::class);
     }
 
-    // 🔗 Inviter relation
     public function inviter()
     {
         return $this->belongsTo(User::class, 'invited_by');
