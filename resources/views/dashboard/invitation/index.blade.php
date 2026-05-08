@@ -166,9 +166,8 @@
 
 @push('scripts')
 <script>
- // 1. Function to open modal and set company details
     function openInviteModal(companyId, companyName) {
-        resetInviteModal(); // Ensure we start fresh
+        resetInviteModal(); 
         document.getElementById('modalCompanyName').innerText = companyName;
         document.getElementById('invite_company_id').value = companyId;
         
@@ -176,7 +175,6 @@
         myModal.show();
     }
 
-    // 2. AJAX Form Submit
     document.getElementById('ajaxInviteForm').addEventListener('submit', function(e) {
         e.preventDefault();
         
@@ -186,7 +184,7 @@
 
         const formData = new FormData(this);
 
-        fetch('/invite', { // Ensure this matches your route
+        fetch('/invite', { 
             method: 'POST',
             body: formData,
             headers: {
@@ -210,7 +208,6 @@
         });
     });
 
-    // 3. Copy to Clipboard Function
     function copyToClipboard() {
         const copyText = document.getElementById("generatedInviteLink");
         copyText.select();
@@ -229,7 +226,6 @@
         }, 2000);
     }
 
-    // 4. Reset Modal Function
     function resetInviteModal() {
         document.getElementById('inviteFormSection').style.display = 'block';
         document.getElementById('inviteResultSection').style.display = 'none';
@@ -245,7 +241,6 @@ function copyLink(inputId, btn) {
     
     navigator.clipboard.writeText(copyText.value);
 
-    // Visual Feedback
     const originalIcon = btn.innerHTML;
     btn.innerHTML = '<i class="bi bi-check-lg"></i>';
     btn.classList.replace('btn-dark', 'btn-success');

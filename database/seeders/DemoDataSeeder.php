@@ -10,7 +10,6 @@ class DemoDataSeeder extends Seeder
 {
     public function run(): void
     {
-        // 👤 Users
         $adarshId = DB::table('users')->insertGetId([
             'name' => 'Adarsh',
             'email' => 'adarsh@gmail.com',
@@ -27,7 +26,6 @@ class DemoDataSeeder extends Seeder
             'updated_at' => now(),
         ]);
 
-        // 🏢 Companies
         $sevenId = DB::table('companies')->insertGetId([
             'name' => 'sevenunique',
             'created_at' => now(),
@@ -40,7 +38,6 @@ class DemoDataSeeder extends Seeder
             'updated_at' => now(),
         ]);
 
-        // 🔗 Roles assign (pivot)
         DB::table('company_user')->insert([
             [
                 'user_id' => $adarshId,

@@ -7,11 +7,12 @@ use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\InviteController;
 use App\Http\Controllers\ShortUrlController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
 
-// 🔐 Auth
+//Auth
+Route::get('/', [AuthController::class, 'showLogin']);
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth');
@@ -23,37 +24,34 @@ Route::post('/invite/{token}', [AuthController::class, 'register'])->name('regis
 Route::post('/joininvite/{token}', [AuthController::class, 'joinCompany'])->name('joinregister');
 
 // Public redirect
-    Route::get('/s/{code}', [ShortUrlController::class, 'redirect']);
+Route::get('/s/{code}', [ShortUrlController::class, 'redirect']);
 
 
-// 🔒 Protected
+//Protected
 Route::middleware(['auth'])->group(function () {
 
-    Route::get('/dashboard', [DashboardController::class, 'index']);
+    Route::middleware(['role:superadmin,admin,member'])->group(function () {
 
-    //users
-    Route::get('/users', [DashboardController::class, 'usersList'])->name('users.index');
+        Route::get('/dashboard', [DashboardController::class, 'index']);
+        Route::get('/invites', [InviteController::class, 'index'])->name('invites.index');
+        Route::get('/short-urls', [ShortUrlController::class, 'index'])->name('short-urls.index');
 
-    Route::get('/select-company', [CompanyController::class, 'select']);
-    Route::post('/change-company', [CompanyController::class, 'setCompany']);
+    });
 
-    Route::get('/companies', [CompanyController::class, 'index'])->name('companies.index');
-    Route::post('/companies/add', [CompanyController::class, 'addCompany'])->name('companies.add');
+    Route::middleware(['role:superadmin,admin'])->group(function () {
+        Route::get('/users', [DashboardController::class, 'usersList'])->name('users.index');
+        Route::get('/companies', [CompanyController::class, 'index'])->name('companies.index');
+        Route::post('/companies/add', [CompanyController::class, 'addCompany'])->name('companies.add');
+        Route::post('/invite', [InviteController::class, 'generate']);
+        Route::post('/invite-old', [InviteController::class, 'invite']);
+    });
 
-    // Invite (admin use karega)
-    Route::get('/invites', [InviteController::class, 'index'])->name('invites.index');
-    Route::post('/invite', [InviteController::class, 'generate']);
-    Route::post('/invite-old', [InviteController::class, 'invite']);
-
-    // page
-    Route::get('/short-urls', [ShortUrlController::class, 'index'])->name('short-urls.index');
-    // ajax create
-    Route::post('/short-urls/store', [ShortUrlController::class, 'store']);
-
-    Route::middleware(['admin'])->group(function () {
-        // Admin-only routes
-
-
+    Route::middleware(['role:admin,member'])->group(function () {
+        Route::get('/select-company', [CompanyController::class, 'select']);
+        Route::post('/change-company', [CompanyController::class, 'setCompany']);
+        // ajax create
+        Route::post('/short-urls/store', [ShortUrlController::class, 'store']);
+        
     });
 
 });
