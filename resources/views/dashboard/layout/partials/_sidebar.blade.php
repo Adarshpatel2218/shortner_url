@@ -20,9 +20,11 @@
                 <i class="bi bi-person-plus"></i> Users
             </a>
         @endif
+        @if(currentUserRole() !== 'member')
         <a href="{{ route('invites.index') }}" class="nav-link {{ request()->is('invites*') ? 'active' : '' }}">
            <i class="bi bi-envelope-plus"></i> Invites
        </a>
+       @endif
 
         <div class="px-4 small text-uppercase opacity-50 mt-4 mb-2" style="font-size: 10px;">Resources</div>
         <a href="{{ route('short-urls.index') }}" class="nav-link {{ request()->is('short-urls*') ? 'active' : '' }}">

@@ -8,7 +8,7 @@
     
     <div class="d-flex align-items-center gap-3">
         <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-2">
-            {{ auth()->user()->is_superadmin ? 'Super Admin' : 'Admin' }}
+            {{ auth()->user()->is_superadmin ? 'Super Admin' : currentUserRole() }}
         </span>
         <div class="vr mx-2 text-secondary opacity-25"></div>
         <i class="bi bi-person-circle fs-4 text-secondary"></i>

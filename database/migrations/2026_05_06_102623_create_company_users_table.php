@@ -13,7 +13,6 @@ return new class extends Migration {
             $table->enum('role', ['admin', 'member']);
             $table->timestamps();
 
-            // $table->unique(['user_id', 'company_id']);
 
             $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
             $table->foreign('company_id')->references('id')->on('companies')->cascadeOnDelete();
